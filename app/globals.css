@@ -1,26 +1,194 @@
 @import "tailwindcss";
 
-:root {
-  --background: #ffffff;
-  --foreground: #171717;
-}
+/*
+ * NexoBoconó — Sistema de Diseño Cívico Comunitario (2026).
+ * Inspirado en Boconó ("El Jardín de Venezuela"):
+ * Tonos esmeralda de bosque nublado, neblina de páramo, ámbar de café y contraste de alta legibilidad.
+ */
 
 @theme inline {
+  --radius-sm: calc(var(--radius) - 4px);
+  --radius-md: calc(var(--radius) - 2px);
+  --radius-lg: var(--radius);
+  --radius-xl: calc(var(--radius) + 4px);
+  --radius-2xl: calc(var(--radius) + 8px);
+  --radius-3xl: calc(var(--radius) + 12px);
+  --radius-4xl: calc(var(--radius) + 16px);
+
   --color-background: var(--background);
   --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
+  --color-card: var(--card);
+  --color-card-foreground: var(--card-foreground);
+  --color-popover: var(--popover);
+  --color-popover-foreground: var(--popover-foreground);
+  --color-primary: var(--primary);
+  --color-primary-foreground: var(--primary-foreground);
+  --color-primary-soft: var(--primary-soft);
+  --color-secondary: var(--secondary);
+  --color-secondary-foreground: var(--secondary-foreground);
+  --color-muted: var(--muted);
+  --color-muted-foreground: var(--muted-foreground);
+  --color-accent: var(--accent);
+  --color-accent-foreground: var(--accent-foreground);
+  --color-destructive: var(--destructive);
+  --color-destructive-foreground: var(--destructive-foreground);
+  --color-border: var(--border);
+  --color-input: var(--input);
+  --color-ring: var(--ring);
+  --color-ring-offset-background: var(--background);
+
+  --color-success: var(--success);
+  --color-success-foreground: var(--success-foreground);
+  --color-success-soft: var(--success-soft);
+  --color-warning: var(--warning);
+  --color-warning-foreground: var(--warning-foreground);
+  --color-warning-soft: var(--warning-soft);
+  --color-urgent: var(--urgent);
+  --color-urgent-foreground: var(--urgent-foreground);
+  --color-urgent-soft: var(--urgent-soft);
+
+  --color-cat-aseo: var(--cat-aseo);
+  --color-cat-electricidad: var(--cat-electricidad);
+  --color-cat-agua: var(--cat-agua);
+  --color-cat-seguridad: var(--cat-seguridad);
+  --color-cat-vialidad: var(--cat-vialidad);
+
+  --color-chart-1: var(--chart-1);
+  --color-chart-2: var(--chart-2);
+  --color-chart-3: var(--chart-3);
+  --color-chart-4: var(--chart-4);
+  --color-chart-5: var(--chart-5);
+
+  --shadow-card: 0 1px 3px oklch(0.22 0.04 165 / 0.05), 0 10px 28px -12px oklch(0.22 0.04 165 / 0.12);
+  --shadow-float: 0 16px 36px -8px oklch(0.28 0.07 165 / 0.28);
+  --shadow-lift: 0 4px 12px oklch(0.22 0.04 165 / 0.06), 0 20px 44px -16px oklch(0.25 0.06 165 / 0.22);
+
+  --color-community-dark: var(--community-dark);
+  --color-community-light: var(--community-light);
+  --color-community-gold: var(--community-gold);
+  --font-sans: var(--font-figtree, system-ui, sans-serif);
+  --font-display: var(--font-outfit, var(--font-figtree, system-ui, sans-serif));
 }
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
+:root {
+  --radius: 0.925rem;
+
+  /* Fondo Neblina de Páramo y Superficies Puras */
+  --background: oklch(0.975 0.008 160);
+  --foreground: oklch(0.21 0.035 168);
+  --card: oklch(1 0 0);
+  --card-foreground: oklch(0.21 0.035 168);
+  --popover: oklch(1 0 0);
+  --popover-foreground: oklch(0.21 0.035 168);
+
+  /* Verde Esmeralda Boconó (Acción Principal) */
+  --primary: oklch(0.48 0.12 162);
+  --primary-foreground: oklch(0.99 0.005 160);
+  --primary-soft: oklch(0.94 0.035 162);
+
+  /* Superficies Secundarias Minerales */
+  --secondary: oklch(0.945 0.014 160);
+  --secondary-foreground: oklch(0.28 0.04 168);
+  --muted: oklch(0.95 0.01 160);
+  --muted-foreground: oklch(0.48 0.025 168);
+  --accent: oklch(0.93 0.028 162);
+  --accent-foreground: oklch(0.26 0.05 168);
+
+  --destructive: oklch(0.56 0.2 25);
+  --destructive-foreground: oklch(0.99 0.005 160);
+
+  /* Estados Semánticos */
+  --success: oklch(0.54 0.14 152);
+  --success-foreground: oklch(0.99 0.005 160);
+  --success-soft: oklch(0.94 0.045 152);
+
+  --warning: oklch(0.73 0.155 68);
+  --warning-foreground: oklch(0.25 0.06 60);
+  --warning-soft: oklch(0.95 0.055 75);
+
+  --urgent: oklch(0.56 0.2 25);
+  --urgent-foreground: oklch(0.99 0.005 25);
+  --urgent-soft: oklch(0.95 0.04 25);
+
+  /* Colores por Categoría de Servicio Público */
+  --cat-agua: oklch(0.56 0.14 235);
+  --cat-electricidad: oklch(0.7 0.16 70);
+  --cat-aseo: oklch(0.54 0.13 155);
+  --cat-vialidad: oklch(0.52 0.1 280);
+  --cat-seguridad: oklch(0.56 0.19 22);
+
+  --border: oklch(0.9 0.015 160);
+  --input: oklch(0.89 0.016 160);
+  --ring: oklch(0.48 0.12 162);
+
+  /* Identidad Bosque Nublado y Ámbar Andino */
+  --community-dark: oklch(0.27 0.055 168);
+  --community-light: oklch(0.985 0.008 160);
+  --community-gold: oklch(0.78 0.15 75);
+
+  --chart-1: oklch(0.48 0.12 162);
+  --chart-2: oklch(0.56 0.14 235);
+  --chart-3: oklch(0.72 0.16 70);
+  --chart-4: oklch(0.56 0.19 22);
+  --chart-5: oklch(0.52 0.1 280);
+
+  --gradient-brand: linear-gradient(135deg, oklch(0.25 0.055 168), oklch(0.36 0.08 162));
+  --gradient-surface: linear-gradient(180deg, oklch(1 0 0), oklch(0.975 0.008 160));
+  --gradient-mesh:
+    radial-gradient(at 0% 0%, oklch(0.94 0.03 162 / 0.55) 0px, transparent 50%),
+    radial-gradient(at 100% 0%, oklch(0.96 0.035 80 / 0.45) 0px, transparent 50%),
+    linear-gradient(180deg, oklch(0.98 0.006 160), oklch(0.965 0.01 160));
+}
+
+@layer base {
+  * {
+    border-color: var(--color-border);
+  }
+
+  body {
+    background-color: var(--color-background);
+    background-image: var(--gradient-mesh);
+    background-attachment: fixed;
+    color: var(--color-foreground);
+    font-family: var(--font-sans);
+    -webkit-font-smoothing: antialiased;
+  }
+
+  h1,
+  h2,
+  h3,
+  h4 {
+    font-family: var(--font-display);
+    letter-spacing: -0.02em;
   }
 }
 
-body {
-  background: var(--background);
+/* Clases utilitarias para inputs y superficies */
+.auth-input {
+  width: 100%;
+  height: 2.85rem;
+  border-radius: 0.85rem;
+  border: 1px solid var(--input);
+  background: var(--card);
+  padding: 0 0.95rem;
+  font-size: 0.875rem;
   color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+  outline: none;
+  transition: border-color 0.15s ease, box-shadow 0.15s ease;
+}
+
+.auth-input:focus {
+  border-color: var(--primary);
+  box-shadow: 0 0 0 3px color-mix(in oklab, var(--ring) 18%, transparent);
+}
+
+.text-gradient-brand {
+  background-image: var(--gradient-brand);
+  background-clip: text;
+  -webkit-background-clip: text;
+  color: transparent;
+}
+
+.bg-gradient-brand {
+  background-image: var(--gradient-brand);
 }

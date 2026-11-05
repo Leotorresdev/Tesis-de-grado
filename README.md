@@ -1,36 +1,69 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# ComunidadConectada (Tesis)
 
-## Getting Started
+Plataforma vecinal para el reporte, seguimiento y gestión colaborativa de fallas en servicios públicos (aseo, agua, electricidad, vialidad y seguridad).
 
-First, run the development server:
+---
 
-```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
+## 🚀 Tecnologías y Arquitectura
+
+- **Framework**: [Next.js 16](https://nextjs.org/) (App Router, Turbopack, React 19).
+- **Estilos**: [Tailwind CSS v4](https://tailwindcss.com/) con tokens de diseño cívico en formato OKLCH.
+- **Animaciones**: [Framer Motion](https://www.framer.com/motion/) para transiciones de cards, pines y microinteracciones de apoyo.
+- **Estado Global**: [Zustand](https://github.com/pmndrs/zustand) (`lib/store/use-reportes.ts`) para reactividad sin re-renders innecesarios.
+- **Iconografía**: [Lucide React](https://lucide.dev/).
+- **Métricas y Gráficos**: [Recharts](https://recharts.org/) en el módulo de transparencia comunitaria.
+- **Feedback**: [Sonner](https://sonner.emilkowal.ski/) para notificaciones toast.
+- **Autenticación y Datos**: [Supabase](https://supabase.com/) (`@supabase/supabase-js`).
+
+---
+
+## 📁 Estructura del Proyecto
+
+```text
+tesis/
+├── app/
+│   ├── layout.tsx             # Shell raíz con fuentes Google (Figtree/Outfit), Auth y navegación
+│   ├── page.tsx               # Feed comunitario principal con filtros y listado
+│   ├── reportar/page.tsx      # Formulario para publicar nueva incidencia con geolocalización y foto
+│   ├── transparencia/page.tsx # Panel de datos abiertos con gráficos de barras y líneas
+│   ├── gestion/page.tsx       # Centro de priorización y gestión de incidencias para voceros
+│   ├── auth/page.tsx          # Inicio de sesión y registro de voceros vecinales
+│   └── globals.css            # Configuración de Tailwind v4 (@theme inline) y utilidades
+├── components/
+│   ├── layout/
+│   │   ├── encabezado.tsx     # Barra institucional superior con navegación desktop
+│   │   └── navegacion-inferior.tsx # Barra de acceso rápido para dispositivos móviles
+│   ├── reportes/
+│   │   └── tarjeta-reporte.tsx # Card de reporte con animación de apoyo popular
+│   └── ui/
+│       ├── button.tsx         # Botón reutilizable con variantes y tamaños
+│       └── badge.tsx          # Etiqueta visual para estados y categorías
+├── lib/
+│   ├── auth/
+│   │   └── auth-context.tsx   # Contexto para sesión y perfil de vocero
+│   ├── store/
+│   │   └── use-reportes.ts    # Store Zustand para reportes, apoyos y persistencia
+│   ├── supabase/
+│   │   ├── client.ts          # Instancia del cliente Supabase configurada para Next.js
+│   │   └── types.ts           # Definición de tipos de tablas Supabase
+│   └── utils.ts               # Utilidad 'cn' para combinar clases de Tailwind
+├── public/
+│   └── images/                # Imágenes de muestra para reportes
+└── types/
+    └── reportes.ts            # Tipos de dominio, estados, categorías y métricas
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+---
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+## 🛠️ Comandos de Desarrollo
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+```bash
+# Iniciar servidor de desarrollo con Turbopack
+npm run dev
 
-## Learn More
+# Compilar para producción
+npm run build
 
-To learn more about Next.js, take a look at the following resources:
-
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
-
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
-
-## Deploy on Vercel
-
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
-
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+# Iniciar servidor de producción
+npm run start
+```
