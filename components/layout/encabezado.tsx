@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
-import { LogOut, ShieldAlert, Sprout, UserCheck } from "lucide-react";
+import { ArrowLeftRight, LogOut, ShieldAlert, Sprout, UserCheck } from "lucide-react";
 import { toast } from "sonner";
 import { Button } from "@/components/ui/button";
 import { useAuth } from "@/lib/auth/auth-context";
@@ -20,8 +20,21 @@ import {
 export function EncabezadoComunidad() {
   const pathname = usePathname();
   const router = useRouter();
-  const { perfil, esVocero, cerrarSesion } = useAuth();
+  const { perfil, esVocero, cerrarSesion, cambiarPerfil } = useAuth();
   const items = obtenerItemsNavegacion(esVocero);
+
+  async function alternarRol() {
+    const nuevoRol = esVocero ? "vecino" : "vocero";
+    await cambiarPerfil(nuevoRol);
+    toast.success(
+      nuevoRol === "vocero"
+        ? "Cambiado a perfil de Vocero (acceso a Gestión activado)"
+        : "Cambiado a perfil de Vecino (vista de habitante comunitario)"
+    );
+    if (nuevoRol === "vecino" && pathname.startsWith("/gestion")) {
+      router.replace("/");
+    }
+  }
 
   async function salir() {
     try {
@@ -97,6 +110,24 @@ export function EncabezadoComunidad() {
             </span>
             <span>{esVocero ? "Vocero" : "Vecino"}</span>
           </span>
+
+          {/* Botón para alternar inmediatamente entre perfil Vocero y Vecino */}
+          <Button
+            variant="outline"
+            size="sm"
+            onClick={() => void alternarRol()}
+            title={
+              esVocero
+                ? "Cambiar a vista de Vecino (probar la aplicación sin acceso a Gestión)"
+                : "Cambiar a vista de Vocero (probar el acceso exclusivo a Gestión)"
+            }
+            className="h-8.5 px-2 sm:px-2.5 rounded-xl text-xs font-semibold border-primary/30 bg-card hover:bg-primary-soft hover:text-primary transition-all cursor-pointer flex items-center gap-1.5 shadow-2xs"
+          >
+            <ArrowLeftRight className="h-3.5 w-3.5 text-primary" aria-hidden />
+            <span className="hidden sm:inline">
+              {esVocero ? "Ver como Vecino" : "Ver como Vocero"}
+            </span>
+          </Button>
 
           <Button
             variant="ghost"
