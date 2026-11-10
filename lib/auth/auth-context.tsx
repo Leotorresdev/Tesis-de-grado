@@ -37,6 +37,13 @@ export type DatosRegistro = {
   password: string;
 };
 
+export type ResumenUsuarioRegistrado = {
+  nombre: string;
+  email: string;
+  rol: RolUsuario;
+  cargo: string;
+};
+
 /**
  * Resultado uniforme de las operaciones de autenticación.
  */
@@ -48,6 +55,7 @@ interface AuthContextValue {
   esVocero: boolean;
   autenticado: boolean;
   cargando: boolean;
+  usuariosRegistrados: ResumenUsuarioRegistrado[];
   iniciarSesion: (email: string, password: string) => Promise<ResultadoAuth>;
   registrarse: (datos: DatosRegistro) => Promise<ResultadoAuth>;
   cerrarSesion: () => Promise<void>;
@@ -58,34 +66,28 @@ const AuthContext = createContext<AuthContextValue | null>(null);
 const LOCAL_SESSION_KEY = "ojedaconecta_sesion_activa_v3";
 const LOCAL_USERS_KEY = "ojedaconecta_usuarios_v3";
 const SESSION_EVENT = "ojedaconecta_session_changed";
-const CLAVES_A_PURGAR = [
+
+// Claves posibles donde puedan haberse guardado usuarios en pruebas anteriores
+const CLAVES_USUARIOS_HISTORICAS = [
+  LOCAL_USERS_KEY,
   "ojedaconecta_usuarios_v2",
-  "ojedaconecta_sesion_activa_v2",
+  "ojedaconecta_usuarios_v1",
+  "ojedaconecta_usuarios",
   "ojedaconecta_usuarios_locales_v1",
-  "ojedaconecta_sesion_activa_v1",
+  "ojedaconecta_usuarios_locales",
   "nexobocono_usuarios_locales_v2",
   "nexobocono_usuarios_locales_v1",
   "nexobocono_usuarios_locales",
+];
+
+// Solo purgamos sesiones viejas, NUNCA las cuentas de usuarios registradas
+const CLAVES_SESION_LEGACY = [
+  "ojedaconecta_sesion_activa_v2",
+  "ojedaconecta_sesion_activa_v1",
   "nexobocono_sesion_activa_v2",
   "nexobocono_sesion_activa_v1",
   "nexobocono_sesion_activa",
 ];
-
-function purgarClavesHistoricas() {
-  if (typeof window === "undefined") return;
-  try {
-    for (const key of CLAVES_A_PURGAR) {
-      window.localStorage.removeItem(key);
-    }
-  } catch {
-    // Ignorar si localStorage no está disponible
-  }
-}
-
-// Limpieza automática al cargar el módulo en el navegador
-if (typeof window !== "undefined") {
-  purgarClavesHistoricas();
-}
 
 interface UsuarioLocal extends Perfil {
   email: string;
@@ -125,11 +127,124 @@ function notifySessionChange() {
   }
 }
 
+let cachedUsersRaw: string | null = null;
+let cachedUsersList: ResumenUsuarioRegistrado[] = [];
+
+/**
+ * Lee los usuarios locales buscando y consolidando en todas las versiones
+ * históricas y claves de almacenamiento para no perder ninguna cuenta creada por el usuario.
+ */
 function leerUsuariosLocales(): UsuarioLocal[] {
   if (typeof window === "undefined") return [];
   try {
+    const mapa = new Map<string, UsuarioLocal>();
+
+    // 1. Escaneo de claves históricas predefinidas
+    for (const clave of CLAVES_USUARIOS_HISTORICAS) {
+      const raw = window.localStorage.getItem(clave);
+      if (raw) {
+        try {
+          const lista = JSON.parse(raw);
+          if (Array.isArray(lista)) {
+            for (const u of lista) {
+              if (u && typeof u.email === "string" && typeof u.password === "string") {
+                const emailNormalizado = u.email.trim().toLowerCase();
+                if (emailNormalizado && !mapa.has(emailNormalizado)) {
+                  mapa.set(emailNormalizado, {
+                    nombre: typeof u.nombre === "string" ? u.nombre.trim() : "Vecino",
+                    sector: typeof u.sector === "string" ? u.sector : "Edificio 1",
+                    casa: typeof u.casa === "string" ? u.casa : "",
+                    cargo:
+                      typeof u.cargo === "string"
+                        ? u.cargo
+                        : u.rol === "vocero"
+                        ? "Vocero Principal"
+                        : "Vecino de la Comunidad",
+                    rol: u.rol === "vocero" ? "vocero" : "vecino",
+                    email: emailNormalizado,
+                    password: u.password.trim(),
+                    avatar_url: u.avatar_url ?? null,
+                  });
+                }
+              }
+            }
+          }
+        } catch {
+          // Ignorar JSON corrupto
+        }
+      }
+    }
+
+    // 2. Escaneo dinámico de cualquier clave residual que mencione "usuario" o "user"
+    for (let i = 0; i < window.localStorage.length; i++) {
+      const keyName = window.localStorage.key(i);
+      if (
+        keyName &&
+        (keyName.toLowerCase().includes("usuario") || keyName.toLowerCase().includes("user")) &&
+        !keyName.toLowerCase().includes("sesion") &&
+        !keyName.toLowerCase().includes("session")
+      ) {
+        const raw = window.localStorage.getItem(keyName);
+        if (raw) {
+          try {
+            const data = JSON.parse(raw);
+            const lista = Array.isArray(data) ? data : [data];
+            for (const u of lista) {
+              if (u && typeof u.email === "string" && typeof u.password === "string") {
+                const emailNormalizado = u.email.trim().toLowerCase();
+                if (emailNormalizado && !mapa.has(emailNormalizado)) {
+                  mapa.set(emailNormalizado, {
+                    nombre: typeof u.nombre === "string" ? u.nombre.trim() : "Vecino",
+                    sector: typeof u.sector === "string" ? u.sector : "Edificio 1",
+                    casa: typeof u.casa === "string" ? u.casa : "",
+                    cargo:
+                      typeof u.cargo === "string"
+                        ? u.cargo
+                        : u.rol === "vocero"
+                        ? "Vocero Principal"
+                        : "Vecino de la Comunidad",
+                    rol: u.rol === "vocero" ? "vocero" : "vecino",
+                    email: emailNormalizado,
+                    password: u.password.trim(),
+                    avatar_url: u.avatar_url ?? null,
+                  });
+                }
+              }
+            }
+          } catch {
+            // Ignorar formatos distintos
+          }
+        }
+      }
+    }
+
+    const todos = Array.from(mapa.values());
+    if (todos.length > 0) {
+      const serializado = JSON.stringify(todos);
+      window.localStorage.setItem(LOCAL_USERS_KEY, serializado);
+      cachedUsersRaw = serializado;
+    }
+    return todos;
+  } catch {
+    return [];
+  }
+}
+
+function getRegisteredUsersSnapshot(): ResumenUsuarioRegistrado[] {
+  if (typeof window === "undefined") return [];
+  try {
     const raw = window.localStorage.getItem(LOCAL_USERS_KEY);
-    return raw ? (JSON.parse(raw) as UsuarioLocal[]) : [];
+    if (raw !== cachedUsersRaw) {
+      cachedUsersRaw = raw;
+      const parsed = leerUsuariosLocales();
+      cachedUsersList = parsed.map((u) => ({
+        nombre: u.nombre,
+        email: u.email,
+        rol: u.rol,
+        cargo: u.cargo,
+      }));
+    }
+    return cachedUsersList;
   } catch {
     return [];
   }
@@ -142,7 +257,10 @@ function guardarUsuarioLocal(usuario: UsuarioLocal) {
       (u) => u.email.toLowerCase() !== usuario.email.toLowerCase()
     );
     lista.push(usuario);
-    window.localStorage.setItem(LOCAL_USERS_KEY, JSON.stringify(lista));
+    const serializado = JSON.stringify(lista);
+    window.localStorage.setItem(LOCAL_USERS_KEY, serializado);
+    cachedUsersRaw = null;
+    notifySessionChange();
   } catch {
     // Ignorar si localStorage no está disponible
   }
@@ -158,7 +276,9 @@ function guardarSesionActiva(perfil: Perfil | null) {
       cachedPerfil = perfil;
     } else {
       window.localStorage.removeItem(LOCAL_SESSION_KEY);
-      purgarClavesHistoricas();
+      for (const k of CLAVES_SESION_LEGACY) {
+        window.localStorage.removeItem(k);
+      }
       cachedRaw = null;
       cachedPerfil = null;
     }
@@ -189,40 +309,54 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     () => null
   );
 
+  const usuariosRegistrados = useSyncExternalStore(
+    subscribeSession,
+    getRegisteredUsersSnapshot,
+    () => []
+  );
+
   const cargando = !montado;
 
   const iniciarSesion = useCallback(
     async (email: string, password: string): Promise<ResultadoAuth> => {
-      const emailLimpio = email.trim().toLowerCase();
+      const identificadorLimpio = email.trim().toLowerCase();
+      const passIngresada = password.trim();
       const locales = leerUsuariosLocales();
 
-      const cuentaPorCorreo = locales.find(
-        (u) => u.email.toLowerCase() === emailLimpio
+      // Permite buscar tanto por correo como por nombre registrado
+      const cuentaEncontrada = locales.find(
+        (u) =>
+          u.email.toLowerCase() === identificadorLimpio ||
+          (u.nombre && u.nombre.trim().toLowerCase() === identificadorLimpio)
       );
 
-      if (!cuentaPorCorreo) {
+      if (!cuentaEncontrada) {
         return {
           ok: false,
-          error:
-            "No encontramos ese correo. Regístrate primero (no necesitas confirmar el correo).",
+          error: `No encontramos ninguna cuenta con el correo o usuario "${email.trim()}" en este navegador. Si te registraste en otra dirección (ej. en Vercel vs localhost) o en modo incógnito, recuerda registrarte una vez aquí para ingresar.`,
         };
       }
 
-      if (cuentaPorCorreo.password !== password) {
+      const passGuardada = (cuentaEncontrada.password || "").trim();
+      const passCoincide =
+        cuentaEncontrada.password === password ||
+        passGuardada === passIngresada;
+
+      if (!passCoincide) {
         return {
           ok: false,
-          error: "La clave ingresada no coincide con la de esta cuenta.",
+          error: "La clave ingresada no coincide con la de esta cuenta. Verifica mayúsculas y minúsculas.",
         };
       }
 
       const perfilLimpio: Perfil = {
-        nombre: cuentaPorCorreo.nombre,
-        sector: cuentaPorCorreo.sector,
-        casa: cuentaPorCorreo.casa,
-        cargo: cuentaPorCorreo.cargo,
-        rol: cuentaPorCorreo.rol,
-        email: cuentaPorCorreo.email,
-        avatar_url: cuentaPorCorreo.avatar_url,
+        nombre: cuentaEncontrada.nombre,
+        sector: cuentaEncontrada.sector,
+        casa: cuentaEncontrada.casa,
+        cargo: cuentaEncontrada.cargo,
+        rol: cuentaEncontrada.rol,
+        email: cuentaEncontrada.email,
+        avatar_url: cuentaEncontrada.avatar_url,
       };
 
       guardarSesionActiva(perfilLimpio);
@@ -235,6 +369,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     async (datos: DatosRegistro): Promise<ResultadoAuth> => {
       const rol: RolUsuario = datos.rol === "vocero" ? "vocero" : "vecino";
       const emailLimpio = datos.email.trim().toLowerCase();
+      const passLimpia = datos.password.trim();
       const cargoFinal =
         rol === "vocero" ? datos.cargo : "Vecino de la Comunidad";
 
@@ -248,11 +383,11 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         avatar_url: null,
       };
 
-      // Guardamos el usuario y activamos su sesión de inmediato sin enviar correo de confirmación
+      // Guardamos el usuario con contraseña limpia y activamos su sesión de inmediato
       guardarUsuarioLocal({
         ...nuevoPerfil,
         email: emailLimpio,
-        password: datos.password,
+        password: passLimpia,
       });
 
       guardarSesionActiva(nuevoPerfil);
@@ -274,11 +409,20 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       esVocero: rol === "vocero",
       autenticado: !!perfil,
       cargando,
+      usuariosRegistrados,
       iniciarSesion,
       registrarse,
       cerrarSesion,
     }),
-    [perfil, rol, cargando, iniciarSesion, registrarse, cerrarSesion]
+    [
+      perfil,
+      rol,
+      cargando,
+      usuariosRegistrados,
+      iniciarSesion,
+      registrarse,
+      cerrarSesion,
+    ]
   );
 
   return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;

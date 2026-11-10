@@ -2,7 +2,7 @@
 
 import { useState, type FormEvent } from "react";
 import Link from "next/link";
-import { Loader2, LogIn, Mail } from "lucide-react";
+import { Loader2, LogIn, Mail, UserCheck } from "lucide-react";
 import { toast } from "sonner";
 import { useAuth } from "@/lib/auth/auth-context";
 import {
@@ -14,13 +14,14 @@ import {
 import { AuthShell } from "@/components/auth/auth-shell";
 import { AlertaFormulario, CampoClave, CampoTexto } from "@/components/auth/campos";
 import { Button } from "@/components/ui/button";
+import { cn } from "@/lib/utils";
 
 /**
  * Pantalla de inicio de sesión para la Comunidad Fabricio Ojeda.
  * La redirección tras el login la gestiona AppShell (vocero → /gestion, vecino → /).
  */
 export default function LoginPage() {
-  const { iniciarSesion } = useAuth();
+  const { iniciarSesion, usuariosRegistrados } = useAuth();
   const [form, setForm] = useState({ email: "", password: "" });
   const [errores, setErrores] = useState<ErroresFormulario<CamposLogin>>({});
   const [errorGeneral, setErrorGeneral] = useState<string | null>(null);
@@ -60,6 +61,37 @@ export default function LoginPage() {
 
       <form onSubmit={enviar} noValidate className="space-y-4" aria-busy={enviando}>
         <AlertaFormulario mensaje={errorGeneral} />
+
+        {usuariosRegistrados.length > 0 && (
+          <div className="rounded-2xl border border-primary/20 bg-primary-soft/40 p-3">
+            <p className="flex items-center gap-1.5 text-xs font-semibold text-foreground mb-2">
+              <UserCheck className="h-3.5 w-3.5 text-primary" />
+              Cuentas registradas en este equipo (clic para autocompletar correo):
+            </p>
+            <div className="flex flex-wrap gap-1.5">
+              {usuariosRegistrados.map((u) => (
+                <button
+                  key={u.email}
+                  type="button"
+                  onClick={() => actualizar("email", u.email)}
+                  className="inline-flex items-center gap-1.5 rounded-lg border border-border bg-card px-2.5 py-1 text-xs font-medium text-foreground transition hover:border-primary hover:text-primary cursor-pointer shadow-2xs"
+                  title={`Rol: ${u.rol === "vocero" ? u.cargo : "Vecino"} · Correo: ${u.email}`}
+                >
+                  <span
+                    className={cn(
+                      "h-2 w-2 rounded-full",
+                      u.rol === "vocero" ? "bg-amber-500" : "bg-emerald-500"
+                    )}
+                  />
+                  <span className="font-semibold">{u.nombre}</span>
+                  <span className="text-[10px] text-muted-foreground">
+                    ({u.rol === "vocero" ? "Vocero" : "Vecino"})
+                  </span>
+                </button>
+              ))}
+            </div>
+          </div>
+        )}
 
         <CampoTexto
           label="Correo electrónico"
