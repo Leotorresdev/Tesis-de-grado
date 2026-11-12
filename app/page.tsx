@@ -40,7 +40,7 @@ function iconoPorZona(zona: string) {
 }
 
 /**
- * Panel Principal de OjedaConecta — Comunidad Fabricio Ojeda.
+ * Panel Principal de Nexo Boconó — Comunidad Fabricio Ojeda.
  * Diseñado con botones grandes y secciones simples para cualquier habitante de Boconó.
  */
 export default function FeedPage() {

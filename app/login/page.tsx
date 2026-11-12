@@ -72,7 +72,7 @@ export default function LoginPage() {
   return (
     <AuthShell>
       <header className="mb-4">
-        <h1 className="text-2xl font-bold tracking-tight">Entrar a OjedaConecta</h1>
+        <h1 className="text-2xl font-bold tracking-tight">Entrar a Nexo Boconó</h1>
         <p className="mt-1 text-sm text-muted-foreground">
           Selecciona tu perfil de acceso o escribe tu correo y clave.
         </p>

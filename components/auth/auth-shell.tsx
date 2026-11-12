@@ -33,7 +33,7 @@ function PanelMarca() {
           </span>
           <div>
             <span className="font-display text-xl font-bold tracking-tight">
-              Ojeda<span className="text-community-gold">Conecta</span>
+              Nexo<span className="text-community-gold">Boconó</span>
             </span>
             <span className="block text-xs text-community-light/75">
               {COMUNIDAD_INFO.nombre} · {COMUNIDAD_INFO.municipio}

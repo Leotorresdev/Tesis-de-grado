@@ -20,17 +20,17 @@ const outfit = Outfit({
 
 // Metadatos de la aplicación para SEO y presentación de tesis
 export const metadata: Metadata = {
-  title: "OjedaConecta — Comunidad Fabricio Ojeda (Boconó)",
+  title: "Nexo Boconó — Comunidad Fabricio Ojeda (Boconó)",
   description:
-    "Plataforma comunitaria sencilla para los 170 habitantes y 55 familias de la Comunidad Fabricio Ojeda (5 edificios, 1 cancha y 2 entradas) en Boconó, Edo. Trujillo: avisos de los voceros y reporte de problemas.",
-  authors: [{ name: "OjedaConecta" }],
+    "Plataforma comunitaria sencilla para los 170 habitantes y 85 familias de la Comunidad Fabricio Ojeda (5 edificios, 1 cancha y 2 entradas) en Boconó, Edo. Trujillo: avisos de los voceros y reporte de problemas.",
+  authors: [{ name: "Nexo Boconó" }],
   icons: {
     icon: "/icon.svg",
     shortcut: "/icon.svg",
     apple: "/icon.svg",
   },
   openGraph: {
-    title: "OjedaConecta — Comunidad Fabricio Ojeda",
+    title: "Nexo Boconó — Comunidad Fabricio Ojeda",
     description:
       "Reporta problemas de agua, luz, aseo, cancha deportiva o entradas de la Comunidad Fabricio Ojeda en Boconó.",
     type: "website",

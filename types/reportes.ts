@@ -1,6 +1,6 @@
 // types/reportes.ts
 /**
- * Modelo de datos para OjedaConecta — Comunidad Fabricio Ojeda (Boconó, Edo. Trujillo).
+ * Modelo de datos para Nexo Boconó — Comunidad Fabricio Ojeda (Boconó, Edo. Trujillo).
  * Estructura exacta: 5 Edificios, 1 Cancha Deportiva, 2 Entradas y 3 Tipos de Voceros.
  */
 

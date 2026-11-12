@@ -1,4 +1,4 @@
-# OjedaConecta 🏢🇻🇪
+# Nexo Boconó (NexoBoconó) 🏢🇻🇪
 
 > **Proyecto de Grado / Tesis Universitaria**  
 > *Plataforma Web Progresiva para la Optimización del Reporte de Incidencias, Gestión de Servicios Públicos y Rendición de Cuentas en la Comunidad Fabricio Ojeda (Boconó, Estado Trujillo).*
@@ -10,7 +10,7 @@
 * **Comunidad:** Complejo Habitacional Fabricio Ojeda.
 * **Ubicación:** Municipio Boconó, Estado Trujillo, Venezuela.
 * **Estructura Física:** 5 Edificios residenciales (Edificios 1 al 5), 1 Cancha Deportiva y 2 Entradas (Principal y Secundaria).
-* **Población:** ~170 habitantes (55 familias organizadas).
+* **Población:** ~170 habitantes (85 familias censadas).
 * **Organización:** Consejos Comunales bajo 3 figuras de vocería:
   1. **Vocero Principal:** Coordinación general de la comunidad y asambleas.
   2. **Vocero Secundario (Por Edificio):** Enlace directo con las familias de su edificio.
@@ -20,7 +20,7 @@
 
 ## 🎯 Planteamiento del Problema y Justificación
 
-| Medio Tradicional | Limitaciones Reales en Venezuela | Solución con OjedaConecta |
+| Medio Tradicional | Limitaciones Reales en Venezuela | Solución con Nexo Boconó |
 | :--- | :--- | :--- |
 | **Grupos de WhatsApp** | Caos de información, pérdida de reportes entre memes y audios, cero trazabilidad y saturación del vocero. | **Registro estructurado** con código único (`FO-XXX`), categorías y fotos. |
 | **VenApp / 1x10 Estatal** | Buzón centralizado y lejano; el vecino no sabe qué pasa en su edificio ni promueve la autogestión local. | **Gestión hiperlocal descentralizada** atendida directamente por los voceros de la comunidad. |

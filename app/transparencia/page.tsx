@@ -34,7 +34,7 @@ const ICONOS_CATEGORIA: Record<Categoria, React.ElementType> = {
 };
 
 /**
- * Panel de Rendición de Cuentas y Resumen Comunitario — OjedaConecta.
+ * Panel de Rendición de Cuentas y Resumen Comunitario — Nexo Boconó.
  * 100% dinámico y calculado en tiempo real con los reportes reales de la comunidad.
  */
 export default function TransparenciaPage() {

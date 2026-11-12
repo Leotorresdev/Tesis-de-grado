@@ -14,7 +14,7 @@ import {
 } from "@/components/layout/items-navegacion";
 
 /**
- * Encabezado institucional de OjedaConecta.
+ * Encabezado institucional de Nexo Boconó.
  * Muestra la navegación según el rol y los datos de la sesión activa.
  */
 export function EncabezadoComunidad() {
@@ -56,7 +56,7 @@ export function EncabezadoComunidad() {
           </span>
           <span className="min-w-0">
             <span className="flex items-center gap-1.5 truncate font-display text-base font-bold tracking-tight">
-              Ojeda<span className="text-primary">Conecta</span>
+              Nexo<span className="text-primary">Boconó</span>
               <span className="hidden rounded-md bg-primary-soft px-1.5 py-0.5 text-[10px] font-bold uppercase text-primary sm:inline-block">
                 170 hab.
               </span>
